@@ -5,9 +5,11 @@ const router = express.Router()
 
 // Mapping entre route et contrôleur
 
-router.get('/', PersonneController.show)
+router.get('/', PersonneController.showAll)
+router.get('/:id', PersonneController.showOne)
 router.post('/', PersonneController.add)
-router.get('/:id', PersonneController.remove)
+router.delete('/:id', PersonneController.remove)
+// router.put('/:id', PersonneController.update)
 
 export default router
 

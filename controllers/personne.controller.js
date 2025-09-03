@@ -17,43 +17,55 @@ const personneSchema = yup.object().shape({
 
 })
 
-const show = async (req, res, next) => {
+const showAll = async (req, res, next) => {
     const personnes = await personneRepository.findAll()
-    if (personnes) {
-
-    } else {
-
-
+    return res
+        .status(200)
+        .json(personnes)
+}
+const showOne = async (req, res, next) => {
+    const id = req.params.id
+    const personne = await personneRepository.findById(id)
+    if (personne) {
+        return res
+            .status(200)
+            .json(personne)
     }
+    return res
+        .sendStatus(404)
 }
 const add = async (req, res, next) => {
-
-    personneSchema
+personneSchema
         .validate(req.body, { abortEarly: false })
         .then(async () => {
-            req.session.firstname = req.body.prenom
             const p = await personneRepository.save(req.body)
-            if (p == null) {
-                const personnes = await personneRepository.findAll()
-
-            } else {
-                console.log(p);
+            if (p) {
+                return res
+                    .status(201)
+                    .json(p)
             }
         })
         .catch(async err => {
             console.log(err);
-            const personnes = await personneRepository.findAll()
-
+            return res
+                .sendStatus(500)
         })
-
-
-
 }
 const remove = async (req, res, next) => {
     const id = req.params.id
-    await personneRepository.deleteById(id)
+    const personne = await personneRepository.findById(id)
+    if (personne) {
+        await personneRepository.deleteById(id)
+        return res
+            //.deleteById(id)
+            .status(204)
+            .json(personne)
+    }
+    return res
+        .sendStatus(404)
 }
 
 
 
-export default { show, add, remove }
+
+export default { showAll, showOne , add, remove }
