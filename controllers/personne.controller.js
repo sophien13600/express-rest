@@ -34,7 +34,7 @@ const showOne = async (req, res, next) => {
     return res
         .sendStatus(404)
 }
-const add = async (req, res, next) => {
+const add =  (req, res, next) => {
 personneSchema
         .validate(req.body, { abortEarly: false })
         .then(async () => {
@@ -65,7 +65,30 @@ const remove = async (req, res, next) => {
         .sendStatus(404)
 }
 
+const update = async(req, res , next) =>{
+ 
+    if (req.params.id != req.body.id){
+        return res
+            .sendStatus(400)
+    }
+  if (!await personneRepository.findById(req.params.id)) {
+        return res.sendStatus(404)
+    }
+     personneSchema
+        .validate(req.body, { abortEarly: false })
+        .then(async () => {
+            await personneRepository.update(req.body)
+            return res
+                .status(202)
+                .json(req.body)
+
+        })
+        .catch(async err => {
+            console.log(err);
+            return res
+                .sendStatus(500)
+        })
+}
 
 
-
-export default { showAll, showOne , add, remove }
+export default { showAll, showOne , add, remove, update }
